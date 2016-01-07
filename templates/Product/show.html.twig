@@ -1,0 +1,49 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-4">
+            <div class="media">
+                {% if product.media.count %}
+                    <a href="{{ media_display_url(product.media.first) }}" class="MagicZoom" id="image">
+                        <img src="{{ media_display_url(product.media.first) }}">
+                    </a>
+
+                    <div class="thumbnails">
+                        {% for media in product.media %}
+                            <a data-zoom-id="image" href="{{ media_display_url(media) }}"
+                               data-image="{{ media_display_url(media) }}">
+                                <img src="{{ media_display_url(media) }}" style="width: 75px;">
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-xs-8">
+            <h1>{{ product.name }}</h1>
+
+            <p>{{ product.shortDescription }}</p>
+
+            <h3>{{ product.price|sylius_price }}</h3>
+            <br>
+
+            <div class="well">
+                {{ product.description | raw }}
+            </div>
+
+            <form action="{{ path('mango_cart_item_add', {'id': product.id}) }}" method="post" class="clearfix">
+                {% set form = sylius_cart_form({'product': product}) %}
+                <div class="form-group">
+                    {{ form_widget(form.quantity, {'attr': {'class': 'center-text'}, 'empty_value': '1'}) }}
+                </div>
+                {{ form_widget(form._token) }}
+                <div class="form-group">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="icon-shopping-cart icon-white"></i> {{ 'mango.add_to_cart'|trans }}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-xs-9">
+            {{ render_block('homepage') }}
+
+            <div class="block-voordelen">
+                {{ render_block('voordelen') }}
+            </div>
+        </div>
+        <div class="col-xs-3">
+            <div class="side-promotions">
+                {{ render_block('sidemenu_top') }}
+                {{ render_block('in_de_media') }}
+                {{ render_block('zoals_gezien_bij') }}
+            </div>
+        </div>
+    </div>
+
+    <h3>Herfst collectie</h3>
+    <div class="row collection">
+        {% for product in shop.taxonomies.collections.herfst.products(4) %}
+            <div class="col-xs-3">
+                <div class="collection-item">
+                    {% if product.media.first %}
+                        <a href="{{ path(product) }}" class="image">
+                            <img class="img-responsive" src="{{ media_display_url(product.media.first) }}">
+                            <div class="price">{{ product.price | sylius_price }}</div>
+                        </a>
+                    {% endif %}
+                    <a href="{{ path(product) }}">
+                        <h4>{{ product.name }}</h4>
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <h3>Ophang systemen</h3>
+    <div class="row">
+        {% for ophangsysteem in shop.taxonomies.ophangsysteem %}
+            <div class="col-md-3">
+                <h4>{{ ophangsysteem.name }}</h4>
+                <a href="{{ path(ophangsysteem) }}">Bestel uw tuinposter</a>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

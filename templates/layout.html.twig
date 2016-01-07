@@ -1,0 +1,70 @@
+{% extends '::base.html.twig' %}
+
+{% import 'MangoWebBundle:Macros:alerts.html.twig' as alerts %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css', 'app') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{{ asset('js/magiczoomplus.css', 'app') }}">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    {% javascripts output='assets/compiled/frontend.js'
+    'bundles/mangoweb/js/frontend.js' %}
+    <script type="text/javascript" src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    <script type="text/javascript" src="{{ asset('js/magiczoomplus.js', 'app') }}"></script>
+{% endblock %}
+
+{% block body %}
+    <div class="container main-container">
+        <div class="header">
+            <div class="shopping-cart text-right">
+                <a href="{{ path('mango_cart_summary') }}">Winkelmandje</a> - {{ sylius_cart_get().totalQuantity }}
+                artikelen ({{ sylius_cart_get().total | sylius_money }})
+            </div>
+            <nav>
+                <ul class="nav nav-pills">
+                    {% for menuNode in shop.menus.main_menu %}
+                        <li>
+                            {% if menuNode.route == 'mango_cart_summary' %}
+                                <a href="{{ path(menuNode) }}">
+                                    {{ menuNode.label }} ({{ sylius_cart_get().totalQuantity }})
+                                </a>
+                            {% else %}
+                                <a href="{{ path(menuNode) }}">{{ menuNode.label }}</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </nav>
+            <a href="{{ path('mango_homepage') }}">
+                <img src="{{ asset('images/logo.jpg', 'app') }}">
+            </a>
+        </div>
+
+        {% block flashes %}
+            {% for type in ['success', 'error', 'notice'] %}
+                {% for flash in app.session.flashbag.get(type) %}
+                    <div class="alert alert-{{ type == 'error' ? 'danger' : type == 'notice' ? 'warning' : type }}">
+                        <a class="close" data-dismiss="alert" href§="#">×</a>
+                        {{ flash|trans }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        {% endblock %}
+
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+
+        <footer class="footer">
+            <p>&copy; Company 2014</p>
+            {{ render_block('block_1') }}
+            <hr>
+        </footer>
+    </div>
+{% endblock %}
