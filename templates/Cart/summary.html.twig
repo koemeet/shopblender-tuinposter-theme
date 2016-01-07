@@ -1,0 +1,99 @@
+{% extends 'layout.html.twig' %}
+
+{% block content %}
+    <div class="page-header">
+        <h1>{{ 'mango.cart.summary_header'|trans|raw }}</h1>
+    </div>
+
+    {% if not cart.empty %}
+        {{ form_errors(form) }}
+
+        <form action="{{ path('mango_cart_save') }}" method="post" novalidate>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>{{ 'mango.cart.summary.product'|trans }}</th>
+                    <th>{{ 'mango.cart.summary.quantity'|trans }}</th>
+                    <th></th>
+                    <th>{{ 'mango.cart.summary.unit_price'|trans }}</th>
+                    <th style="text-align: right;">{{ 'mango.cart.summary.total'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for item in form.items %}
+                    {% include 'Cart:_item.html.twig' %}
+                {% endfor %}
+                </tbody>
+                <tfoot>
+                {% if cart.adjustmentsTotal('promotion') %}
+                    <tr>
+                        <td colspan="6" style="text-align: right;">
+                            <strong>{{ 'mango.order.promotion_total'|trans }}</strong>:
+                            -{{ (-1 * cart.adjustmentsTotal('promotion'))|sylius_price }}
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td colspan="6" style="text-align: right;">
+                        <strong>{{ 'mango.order.shipping_total'|trans }}</strong>: {{ cart.adjustmentsTotal('shipping')|sylius_price }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <p><strong>{{ 'mango.order.taxes'|trans }}</strong></p>
+                        <ul>
+                            {% for taxAdjustment in cart.adjustments('tax') %}
+                                <li>{{ taxAdjustment.description }} {{ taxAdjustment.amount|sylius_price }} </li>
+                            {% else %}
+                                <li><span class="label label-info">{{ 'mango.order.no_taxes'|trans }}</span></li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td colspan="2" style="text-align: right;">
+                        <strong>{{ 'mango.order.tax_total'|trans }}</strong>: {{ cart.adjustmentsTotal('tax')|sylius_price }}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" style="text-align: right;">
+                        <strong>{{ 'mango.cart.summary.grand_total'|trans }}</strong>: {{ cart.total|sylius_price }}
+                    </td>
+                </tr>
+                </tfoot>
+            </table>
+
+            <div id="sylius-cart-coupons" class="well well-sm"
+                 data-prototype="{{ form_row(form.promotionCoupons.vars.prototype)|e }}">
+                <div id="sylius-cart-coupons-collection">
+                    {% for couponField in form.promotionCoupons %}
+                        {{ form_row(couponField) }}
+                    {% endfor %}
+                </div>
+            </div>
+
+            {{ form_rest(form) }}
+
+            <div class="well">
+                <button type="submit" class="btn btn-primary">
+                    <i class="icon-save"></i> {{ 'mango.cart.summary.save'|trans }}
+                </button>
+                <div class="pull-right">
+                    <a href="{{ path('mango_checkout_start') }}" class="btn btn-success">
+                        <i class="fa fa-arrow-right"></i> {{ 'mango.cart.summary.checkout'|trans }}
+                    </a>
+                    <a href="{{ path('mango_cart_clear') }}" class="btn btn-danger">
+                        <i class="icon-remove"></i> {{ 'mango.cart.summary.clear'|trans }}
+                    </a>
+                </div>
+            </div>
+        </form>
+    {% else %}
+        {{ 'mango.cart.empty' | trans }}
+    {% endif %}
+
+{% endblock %}
+
+{% block sylius_cart_item_row %}
+    {{ parent() }}
+    {% block form_message %}{% endblock %}
+{% endblock %}
