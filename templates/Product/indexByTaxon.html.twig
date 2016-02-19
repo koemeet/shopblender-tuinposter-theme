@@ -1,9 +1,27 @@
 {% extends 'layout.html.twig' %}
 
 {% block content %}
-    ejejej
-    sdfsd
-    fs
-    dfs
-    dfsdf
+    <h2>{{ taxon.name }}</h2>
+    <p>{{ taxon.description|raw }}</p>
+
+    <br>
+
+    <div class="row">
+        {% for product in taxon.products(4) %}
+            <div class="col-xs-6 col-sm-4 col-md-3">
+                <div class="product-box">
+                    <div class="image">
+                        <a href="{{ path(product) }}">
+                            <img height="100" src="{{ media_display_url(product.media.first) }}">
+                        </a>
+                    </div>
+                    <div class="name">{{ product.name }}</div>
+                    <div class="price">{{ product.price|sylius_price }}</div>
+                    <div class="actions">
+                        <a href="{{ path(product) }}" class="btn btn-primary">Info</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

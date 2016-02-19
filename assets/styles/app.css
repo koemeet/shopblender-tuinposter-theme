@@ -8,10 +8,16 @@ body {
     border-top: 5px solid #000;
     min-height: 100%;
     display: flex;
-  flex-flow: column;
+    flex-flow: column;
+}
+
+body.toolbar-padding {
+    padding-top: 0px;
+    margin-top: 60px;
 }
 
 h1, h2 {
+    margin-top: 0px;
     border-bottom: 1px solid #000;
     color: #C30D0D;
     font-size: 22px;
@@ -76,9 +82,10 @@ nav ul li a {
     display: block;
     padding: 15px 20px;
     color: #fff !important;
+    text-decoration: none;
 }
 
-nav ul li a:hover, nav ul li a:active {
+nav ul li a:hover, nav ul li a:active, nav ul li a.active {
     background: #C30D0D;
     text-decoration: none;
     color: #fff !important;
@@ -89,6 +96,8 @@ nav ul li a:hover, nav ul li a:active {
     padding-bottom: 20px;
     z-index: 2;
     position: relative;
+    min-height: 200px;
+    padding-top: 20px;
 }
 
 .container-footer {
@@ -113,4 +122,35 @@ footer h2 {
     font-weight: bold;
     border: none;
     padding-bottom: inherit;
+}
+
+.product-box {
+    border: 1px solid red;
+    padding: 20px;
+    overflow: auto;
+}
+
+.product-box .name {
+    display: block;
+    margin-top: 15px;
+    margin-bottom: 30px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.product-box .price {
+    float: left;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.product-box .actions {
+    float: right;
+}
+
+.product-box .image {
+    text-align: center;
+}
+.product-box .image img {
+    height: 100px;
 }

@@ -40,8 +40,12 @@
     <nav>
         <div class="container">
             <ul>
-                {% for taxon in shop.settings.menu_categories %}
-                    <li><a href="{{ path(taxon) }}">{{ taxon.name }}</a></li>
+                {% for taxon in shop.settings.menu_category %}
+                    <li>
+                        <a href="{{ path(taxon) }}" class="{{ app.request.requestUri == path(taxon) ? 'active' : '' }}">
+                            {{ taxon.name }}
+                        </a>
+                    </li>
                 {% endfor %}
             </ul>
         </div>

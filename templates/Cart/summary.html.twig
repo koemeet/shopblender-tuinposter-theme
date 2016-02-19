@@ -1,9 +1,7 @@
-{% extends 'layout.html.twig' %}
+{% extends 'MangoWebBundle::layout.html.twig' %}
 
 {% block content %}
-    <div class="page-header">
-        <h1>{{ 'mango.cart.summary_header'|trans|raw }}</h1>
-    </div>
+    <h1>{{ 'mango.cart.summary_header'|trans|raw }}</h1>
 
     {% if not cart.empty %}
         {{ form_errors(form) }}
@@ -22,13 +20,21 @@
                 </thead>
                 <tbody>
                 {% for item in form.items %}
-                    {% include 'Cart:_item.html.twig' %}
+                    {% include 'MangoWebBundle:Cart:_item.html.twig' %}
                 {% endfor %}
                 </tbody>
                 <tfoot>
                 {% if cart.adjustmentsTotal('promotion') %}
                     <tr>
-                        <td colspan="6" style="text-align: right;">
+                        <td colspan="4">
+                            <p><strong>{{ 'mango.checkout.finalize.order.promotion_discount'|trans }}</strong></p>
+                            <ul>
+                                {% for adjustment in cart.adjustments('promotion') %}
+                                    <li>{{ adjustment.label }} {{ adjustment.amount|sylius_price }} </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        <td colspan="2" style="text-align: right;">
                             <strong>{{ 'mango.order.promotion_total'|trans }}</strong>:
                             -{{ (-1 * cart.adjustmentsTotal('promotion'))|sylius_price }}
                         </td>
@@ -36,22 +42,23 @@
                 {% endif %}
                 <tr>
                     <td colspan="6" style="text-align: right;">
-                        <strong>{{ 'mango.order.shipping_total'|trans }}</strong>: {{ cart.adjustmentsTotal('shipping')|sylius_price }}
+                        {% set shippingTotal = cart.adjustmentsTotal('tax') + cart.adjustmentsTotal('shipping') %}
+                        <strong>{{ 'mango.order.shipping_total'|trans }}</strong>: {{ shippingTotal|sylius_price }}
                     </td>
                 </tr>
                 <tr>
                     <td colspan="4">
                         <p><strong>{{ 'mango.order.taxes'|trans }}</strong></p>
                         <ul>
-                            {% for taxAdjustment in cart.adjustments('tax') %}
-                                <li>{{ taxAdjustment.description }} {{ taxAdjustment.amount|sylius_price }} </li>
+                            {% for taxLabel, taxAmount in sylius_aggregate_adjustments(cart.getAdjustmentsRecursively('tax')) %}
+                                <li>{{ taxLabel }} {{ taxAmount|sylius_price }} </li>
                             {% else %}
-                                <li><span class="label label-info">{{ 'mango.order.no_taxes'|trans }}</span></li>
+                                <li><span class="label label-info">{{ 'sylius.order.no_taxes'|trans }}</span></li>
                             {% endfor %}
                         </ul>
                     </td>
                     <td colspan="2" style="text-align: right;">
-                        <strong>{{ 'mango.order.tax_total'|trans }}</strong>: {{ cart.adjustmentsTotal('tax')|sylius_price }}
+                        <strong>{{ 'mango.order.tax_total'|trans }}</strong>: {{ cart.getAdjustmentsTotalRecursively('tax')|sylius_price }}
                     </td>
                 </tr>
                 <tr>
@@ -62,17 +69,17 @@
                 </tfoot>
             </table>
 
-            <div id="sylius-cart-coupons" class="well well-sm"
-                 data-prototype="{{ form_row(form.promotionCoupons.vars.prototype)|e }}">
+            <div id="sylius-cart-coupons" class="well well-sm">
                 <div id="sylius-cart-coupons-collection">
-                    {% for couponField in form.promotionCoupons %}
-                        {{ form_row(couponField) }}
-                    {% endfor %}
+                    {{ form_row(form.promotionCoupon , {'label_attr': {'class': 'col-lg-12'}}) }}
                 </div>
             </div>
 
-            {{ form_rest(form) }}
+            <div id="sylius-cart-additional-information" class="well well-sm">
+                {{ form_row(form.additionalInformation, {'label_attr': {'class': 'col-lg-12'}}) }}
+            </div>
 
+            {{ form_rest(form) }}
             <div class="well">
                 <button type="submit" class="btn btn-primary">
                     <i class="icon-save"></i> {{ 'mango.cart.summary.save'|trans }}
