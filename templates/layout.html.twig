@@ -5,64 +5,86 @@
 {% block stylesheets %}
     {{ parent() }}
     <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="{{ asset('css/style.css', 'app') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('styles/app.css', 'app') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="{{ asset('js/magiczoomplus.css', 'app') }}">
 {% endblock %}
 
 {% block javascripts %}
     {{ parent() }}
-    {% javascripts output='assets/compiled/frontend.js'
-    'bundles/mangoweb/js/frontend.js' %}
-    <script type="text/javascript" src="{{ asset_url }}"></script>
-    {% endjavascripts %}
     <script type="text/javascript" src="{{ asset('js/magiczoomplus.js', 'app') }}"></script>
 {% endblock %}
 
 {% block body %}
     <div class="container main-container">
         <div class="header">
-            <div class="shopping-cart text-right">
-                <a href="{{ path('mango_cart_summary') }}">Winkelmandje</a> - {{ sylius_cart_get().totalQuantity }}
-                artikelen ({{ sylius_cart_get().total | sylius_money }})
+            <div class="shopping-cart">
+                <a href="{{ path('mango_cart_summary') }}" class="icon">
+                    <span class="fa fa-shopping-cart"></span>
+                </a>
+
+                <div>
+                    <a href="{{ path('mango_cart_summary') }}" class="title">Winkelwagen</a>
+                    <span class="info">
+                        {{ sylius_cart_get().totalQuantity }}
+                        artikelen ({{ sylius_cart_get().total | sylius_money }})
+                    </span>
+                </div>
             </div>
-            <nav>
-                <ul class="nav nav-pills">
-                    {% for menuNode in shop.menus.main_menu %}
-                        <li>
-                            {% if menuNode.route == 'mango_cart_summary' %}
-                                <a href="{{ path(menuNode) }}">
-                                    {{ menuNode.label }} ({{ sylius_cart_get().totalQuantity }})
-                                </a>
-                            {% else %}
-                                <a href="{{ path(menuNode) }}">{{ menuNode.label }}</a>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            </nav>
             <a href="{{ path('mango_homepage') }}">
                 <img src="{{ asset('images/logo.jpg', 'app') }}">
             </a>
         </div>
+    </div>
 
-        {% block flashes %}
-            {% for type in ['success', 'error', 'notice'] %}
-                {% for flash in app.session.flashbag.get(type) %}
-                    <div class="alert alert-{{ type == 'error' ? 'danger' : type == 'notice' ? 'warning' : type }}">
-                        <a class="close" data-dismiss="alert" href§="#">×</a>
-                        {{ flash|trans }}
-                    </div>
+    <nav>
+        <div class="container">
+            <ul>
+                {% for taxon in shop.settings.menu_categories %}
+                    <li><a href="{{ path(taxon) }}">{{ taxon.name }}</a></li>
                 {% endfor %}
-            {% endfor %}
-        {% endblock %}
-
-        <div class="content">
-            {% block content %}{% endblock %}
+            </ul>
         </div>
+    </nav>
 
-        <footer class="footer">
-            <p>&copy; Company 2014 - Powered by Shopblender</p>
+    <div class="container-content">
+        <div class="container">
+            {% block flashes %}
+                {% for type in ['success', 'error', 'notice'] %}
+                    {% for flash in app.session.flashbag.get(type) %}
+                        <div class="alert alert-{{ type == 'error' ? 'danger' : type == 'notice' ? 'warning' : type }}">
+                            <a class="close" data-dismiss="alert" href§="#">×</a>
+                            {{ flash|trans }}
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            {% endblock %}
+
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container-footer">
+        <h3>Algemene informatie</h3>
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3">
+                        {{ render_block('footer_1') }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ render_block('footer_2') }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ render_block('footer_3') }}
+                    </div>
+                    <div class="col-md-3">
+                        {{ render_block('footer_4') }}
+                    </div>
+                </div>
+            </div>
         </footer>
     </div>
 {% endblock %}

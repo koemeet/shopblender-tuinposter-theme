@@ -1,26 +1,11 @@
 name: Dark Theme
 version: 1.0
 settings:
-    colors:
-        icon: pallette
-        label:
-            en: Colors
-            nl: Kleuren
-        type: image
-
-    frontpage_collection_left:
-        icon: tag
-        label: Frontpage Collection
-        type: collection:taxon
-
-    lettertype:
-        type: choice
-        choices: [Arial, Times New Roman, Georgia]
-
-    tan:
-        type: boolean
-        default: true
-
-    dsfsdf:
-        type: string
-        required: true
+    -   label: Frontpage - featured
+        settings:
+            home_featured_products:
+                type: taxon
+                label: Products shown on the homepage
+            home_featured_show_header:
+                type: boolean
+                label: Show header of taxon?
